@@ -10,23 +10,29 @@ var viewHandlers = require('./viewHandlers');
 http.createServer(function (req, res) {
     var urlInfo  = url.parse(req.url, true, true);
 //    console.log("urlInfo");
-//    console.log(urlInfo.path);
+    console.log(urlInfo.path);
     var firstLocation = urlInfo.path.split('/')[1];
 //    console.log(firstLocation);
     
-    // Serving CSS, JS and favicon
-    if(firstLocation === 'css' || firstLocation === 'script' || firstLocation === 'favicon.ico') {
-        console.log("CSS, JS or favicon.ico; needed static hosting");
+    // Serving CSS, JS, Images and favicon
+    if(firstLocation === 'css' || firstLocation === 'script' || firstLocation === 'image' || firstLocation === 'favicon.ico') {
+//        console.log("CSS, JS or favicon.ico; needed static hosting");
         staticServer.serve(req, res);
     } else {
-        switch(urlInfo.path) {
+        switch(firstLocation) {
                 // Index page
-                case '/':
-                case '/index':
-                case '/index/':
-                viewHandlers.index(req, res);
+                case '':
+                case 'index':
+                    viewHandlers.index(req, res);
+                break;
+                case 'loginLocal':
+                    viewHandlers.loginLocal(req, res);
+                break;
+                case 'dashboard':
+                    viewHandlers.dashboard(req, res);
+                break;
                 default:
-                viewHandlers.notFound(req, res);
+                    viewHandlers.notFound(req, res);
         }
     }
 }).listen(port);
