@@ -9,9 +9,7 @@
   "dependencies": {
     "formidable": "^1.0.16",
     "mongodb": "^1.4.30",
-    "node-static": "^0.7.6",
-    "passport": "^0.2.1",
-    "passport-local": "^1.0.0"
+    "node-static": "^0.7.6"
   },
   "repository": {
     "type": "git",
