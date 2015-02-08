@@ -4,8 +4,8 @@ var util = require('util');
 
 // Hardcoded user Information
 var users = [
-    { useremail: 'ishan1608@gmail.com', userpassword: '123456'},
-    { useremail: 'ishan1608@live.com', userpassword: 'qwerty'}
+    { useremail: 'ishan1608@gmail.com', userpassword: '123456', cookiejar=[]},
+    { useremail: 'ishan1608@live.com', userpassword: 'qwerty', cookiejar=[]}
 ];
 
 // Request handling for Views
@@ -37,10 +37,15 @@ function notFound(req, res) {
 // Local login using emailId and password combination
 function loginLocal(req, res) {
     console.log('loginLocal called');
-    // Need to set cookies on my own. For now I will test using hardocded users
-    res.writeHead(302, {'Location': '/dashboard', 'Content-Type': 'text/plain; charset=utf-8'});
-    res.write('Redirecting.......');
-    res.end();
+//    res.writeHead(302, {'Location': '/dashboard', 'Content-Type': 'text/plain; charset=utf-8'});
+//    res.write('Redirecting.......');
+//    res.end();
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        // Need to set cookies on my own. For now I will test using hardocded users and hardocded cookie
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end(util.inspect({fields: fields}));
+    });
 }
 
 function dashboard(req, res) {
