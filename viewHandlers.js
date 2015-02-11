@@ -1,12 +1,5 @@
 var fs = require('fs');
-var formidable = require('formidable');
-var util = require('util');
-
-// Hardcoded user Information
-var users = [
-    { useremail: 'ishan1608@gmail.com', userpassword: '123456', cookiejar=[]},
-    { useremail: 'ishan1608@live.com', userpassword: 'qwerty', cookiejar=[]}
-];
+var loginHandler = require('./loginHandler')
 
 // Request handling for Views
 
@@ -29,31 +22,25 @@ function index(req, res) {
 // Not Found handler
 function notFound(req, res) {
     res.writeHead(404, {'Content-Type': 'text/plain; charset=utf-8'});
-    res.write('We weren\' able to find ' + req.url + ' on our servers. Are you sure you typed the URL correct ? If yes please contact the admin of this server.');
+    res.write('We weren\'t able to find ' + req.url + ' on our servers. Are you sure you typed the URL correct ? If yes please contact the admin of this server.');
     res.end();
 }
 
-
-// Local login using emailId and password combination
-function loginLocal(req, res) {
-    console.log('loginLocal called');
-//    res.writeHead(302, {'Location': '/dashboard', 'Content-Type': 'text/plain; charset=utf-8'});
-//    res.write('Redirecting.......');
-//    res.end();
-    var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        // Need to set cookies on my own. For now I will test using hardocded users and hardocded cookie
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(util.inspect({fields: fields}));
-    });
-}
-
 function dashboard(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
-    res.end('This is a dashboard');
+    // Need to ensure authentication using loginHandler
+    // We will use loginHandler.ensureAUthenticated for authentication
+    var userEmail = loginHandler.ensureAuthenticated(req, res);
+    // Reqponse based on user authentication
+    if(userEmail) {
+        res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+        res.end('Welcome ' + userEmail);
+    } else {
+        res.writeHead(401, {'ContentType': 'text/html;charset=utf-8'});
+        res.write("<html><head></head><body>We couldn't figure out who you are.<br/>For all we know you could be trying to find a vlunerability in our system. Please <a href='/'>Login</a> to continue.</body></html>");
+        res.end();
+    }
 }
 
 exports.index = index;
 exports.notFound = notFound;
-exports.loginLocal = loginLocal;
 exports.dashboard = dashboard;

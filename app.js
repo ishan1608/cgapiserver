@@ -1,11 +1,11 @@
 var http = require('http');
 var url = require('url');
 var nodeStatic = require('node-static');
-
 var staticServer = new(nodeStatic.Server)();
 
 var port = Number(process.env.PORT || 8080);
 var viewHandlers = require('./viewHandlers');
+var loginHandler = require('./loginHandler');
 
 http.createServer(function (req, res) {
     var urlInfo  = url.parse(req.url, true, true);
@@ -26,7 +26,7 @@ http.createServer(function (req, res) {
                     viewHandlers.index(req, res);
                 break;
                 case 'loginLocal':
-                    viewHandlers.loginLocal(req, res);
+                    loginHandler.loginLocal(req, res);
                 break;
                 case 'dashboard':
                     viewHandlers.dashboard(req, res);
