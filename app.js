@@ -31,6 +31,9 @@ http.createServer(function (req, res) {
                 case 'dashboard':
                     viewHandlers.dashboard(req, res);
                 break;
+                case 'logout':
+                    loginHandler.logout(req, res);
+                break;
                 default:
                     viewHandlers.notFound(req, res);
         }

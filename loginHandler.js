@@ -82,40 +82,77 @@ function ensureAuthenticated(req, res) {
         var sessionCookie = cookies.get("session", {signed: true});
         console.log("emailCookie : " + emailCookie);
         console.log("sessionCookie : " + sessionCookie);
-        console.log("typeof(sessionCookie) "+ typeof(sessionCookie));
+//        console.log("typeof(sessionCookie) "+ typeof(sessionCookie));
     } catch(error) {
         cookieError = true;
-        console.log("Couldn't find any cookie");
+//        console.log("Couldn't find any cookie");
     }
     
     if(!cookieError) {
         var totalUsers = users.length;
-        console.log("totalUsers" + totalUsers);
+//        console.log("totalUsers" + totalUsers);
         for( var i=0; i < totalUsers; i++) {
             if(users[i].useremail === emailCookie) {
-                console.log("users[i].useremail: " + users[i].useremail);
+//                console.log("users[i].useremail: " + users[i].useremail);
                 var cookieJar = users[i].cookiejar;
                 var cookieJarLength = cookieJar.length;
-                console.log("users[i].cookiejar.length " + cookieJarLength);
+                console.log("cookieJar " + cookieJar);
+//                console.log("users[i].cookiejar.length " + cookieJarLength);
                 for(var j = 0; j < cookieJarLength; j++ ) {
-                    console.log("cookieJar[j] "+ cookieJar[j]);
+//                    console.log("cookieJar[j] "+ cookieJar[j]);
                     if(cookieJar[j] === sessionCookie) {
-                        console.log("Cookie matched");
+//                        console.log("Cookie matched");
                         return emailCookie;
                     }
                 }
-                console.log("No cookie found");
+//                console.log("No cookie found");
                 return false;
             }
         }
         // User doesn't exists
-        console.log("User doesn't exists");
+//        console.log("User doesn't exists");
         return false;
     } else {
-        console.log("Returning false because couldn't get all the cookies.");
+//        console.log("Returning false because couldn't get all the cookies.");
         return false;
     }
 }
 
+function logout(req, res) {
+    // Get the cookie and remove it from the jar
+    var cookies = new Cookies(req, res, keys);
+    try {
+        var emailCookie = cookies.get("email", {signed: true});
+        // Clearing the cookie
+        cookies.set( "email", null, { signed: true } );
+        
+        var sessionCookie = cookies.get("session", {signed: true});
+        cookies.set( "session", null, { signed: true } );
+        
+        console.log("emailCookie : " + emailCookie);
+        console.log("sessionCookie : " + sessionCookie);
+//        console.log("typeof(sessionCookie) "+ typeof(sessionCookie));
+        var totalUsers = users.length;
+        for( var i = 0; i < totalUsers; i++) {
+            if(users[i].useremail === emailCookie) {
+                var cookieJar = users[i].cookiejar;
+                
+                console.log("cookieJar " + cookieJar);
+                var cookiePosition = cookieJar.indexOf(sessionCookie);
+                if(cookiePosition != -1) {
+                    cookieJar.splice(cookiePosition, 1);
+                }
+                console.log("cookieJar " + cookieJar);
+            }
+        }
+    } catch(error) {
+        console.log("Couldn't find any cookie, nothing to logout.");
+    }
+    // Redirecting to index page for login
+    res.writeHead(302, {'Location': '/'});
+    res.end();
+}
+
 exports.loginLocal = loginLocal;
 exports.ensureAuthenticated = ensureAuthenticated;
+exports.logout = logout;
